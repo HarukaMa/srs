@@ -197,9 +197,9 @@ string srs_generate_stream_with_query(string host, string vhost, string stream, 
     }
     
     // Well, if vhost exists, always append in query string.
-    if (!guessVhost.empty()) {
-        query += "&vhost=" + guessVhost;
-    }
+//    if (!guessVhost.empty()) {
+//        query += "&vhost=" + guessVhost;
+//    }
     
     // Remove the start & when param is empty.
     query = srs_string_trim_start(query, "&");
