@@ -329,6 +329,7 @@ string srs_generate_rtmp_url_special(string server, int port, string host, strin
         string bili_app = param.substr(param.rfind("=") + 1);
         server = bili_app + "." + server;
         app = "live-" + bili_app;
+        stream = string("");
     } else {
         app = string("video");
     }
