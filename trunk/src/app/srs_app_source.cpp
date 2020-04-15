@@ -1472,6 +1472,9 @@ srs_error_t SrsOriginHub::create_forwarders()
     for (int i = 0; conf && i < (int)conf->args.size(); i++) {
         std::string forward_server = conf->args.at(i);
         
+        if (this->req->app != "bilibili" && forward_server.find("live-send.acg.tv") != std::string::npos) {
+            continue;
+        }
         SrsForwarder* forwarder = new SrsForwarder(this);
         forwarders.push_back(forwarder);
         

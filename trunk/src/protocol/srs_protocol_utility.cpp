@@ -213,7 +213,7 @@ string srs_generate_stream_with_query(string host, string vhost, string stream, 
     if (!query.empty()) {
         url += query;
     }
-    
+
     return url;
 }
 
@@ -319,6 +319,23 @@ string srs_generate_rtmp_url(string server, int port, string host, string vhost,
     string tcUrl = "rtmp://" + server + ":" + srs_int2str(port) + "/"  + app;
     string streamWithQuery = srs_generate_stream_with_query(host, vhost, stream, param);
     string url = tcUrl + "/" + streamWithQuery;
+    return url;
+}
+
+string srs_generate_rtmp_url_special(string server, int port, string host, string vhost, string app, string stream, string param)
+{
+    // srs_error("%s %d %s %s %s %s %s\n", server.c_str(), port, host.c_str(), vhost.c_str(), app.c_str(), stream.c_str(), param.c_str());
+    if (server.find("live-send.acg.tv") != string::npos) {
+        string bili_app = param.substr(param.rfind("=") + 1);
+        server = bili_app + "." + server;
+        app = "live-" + bili_app;
+    } else {
+        app = string("video");
+    }
+    string tcUrl = "rtmp://" + server + ":" + srs_int2str(port) + "/"  + app;
+    string streamWithQuery = srs_generate_stream_with_query(host, vhost, stream, param);
+    string url = tcUrl + "/" + streamWithQuery;
+    // srs_error("%s\n", url.c_str());
     return url;
 }
 

@@ -211,7 +211,11 @@ srs_error_t SrsForwarder::do_cycle()
         srs_parse_hostport(ep_forward, server, port);
         
         // generate url
-        url = srs_generate_rtmp_url(server, port, req->host, req->vhost, req->app, req->stream, req->param);
+        if (req->app == "bilibili") {
+            url = srs_generate_rtmp_url_special(server, port, req->host, req->vhost, req->app, req->stream, req->param);
+        } else {
+            url = srs_generate_rtmp_url(server, port, req->host, req->vhost, req->app, req->stream, req->param);
+        }
     }
     
     srs_freep(sdk);
