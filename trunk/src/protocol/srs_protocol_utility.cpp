@@ -321,6 +321,7 @@ string srs_generate_rtmp_url(string server, int port, string host, string vhost,
     char *token = strtok(buf, "&");
     char b_app[4] = { 0 };
     char push_domain[64] = { 0 };
+    int param_port = 0;
     while (token != NULL) {
         char *equal = strchr(token, '=');
         if (equal == NULL) {
@@ -333,7 +334,7 @@ string srs_generate_rtmp_url(string server, int port, string host, string vhost,
         } else if (!strcmp(token, "push_domain")) {
             strcpy(push_domain, ++equal);
         } else if (!strcmp(token, "push_port")) {
-            port = atoi(++equal);
+            param_port = atoi(++equal);
         }
         token = strtok(NULL, "&");
     }
@@ -346,6 +347,7 @@ string srs_generate_rtmp_url(string server, int port, string host, string vhost,
         app = string("video");
         if (server.find("phb2cn") != string::npos) {
             server = string(push_domain);
+            port = param_port;
         }
     }
     string tcUrl = "rtmp://" + server + ":" + srs_int2str(port) + "/"  + app;
