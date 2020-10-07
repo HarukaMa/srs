@@ -316,27 +316,42 @@ void srs_parse_rtmp_url(string url, string& tcUrl, string& stream)
 
 string srs_generate_rtmp_url(string server, int port, string host, string vhost, string app, string stream, string param)
 {
-    string tcUrl = "rtmp://" + server + ":" + srs_int2str(port) + "/"  + app;
-    string streamWithQuery = srs_generate_stream_with_query(host, vhost, stream, param);
-    string url = tcUrl + "/" + streamWithQuery;
-    return url;
-}
-
-string srs_generate_rtmp_url_special(string server, int port, string host, string vhost, string app, string stream, string param)
-{
-    // srs_error("%s %d %s %s %s %s %s\n", server.c_str(), port, host.c_str(), vhost.c_str(), app.c_str(), stream.c_str(), param.c_str());
-    if (server.find("live-send.acg.tv") != string::npos) {
-        string bili_app = param.substr(param.rfind("=") + 1);
+    char buf[1024];
+    strcpy(buf, param.c_str());
+    char *token = strtok(buf, "&");
+    char b_app[4] = { 0 };
+    char push_domain[64] = { 0 };
+    while (token != NULL) {
+        char *equal = strchr(token, '=');
+        if (equal == NULL) {
+            token = strtok(NULL, "&");
+            continue;
+        }
+        *equal = '\0';
+        if (!strcmp(token, "b_app")) {
+            strcpy(b_app, ++equal);
+        } else if (!strcmp(token, "push_domain")) {
+            strcpy(push_domain, ++equal);
+        } else if (!strcmp(token, "push_port")) {
+            port = atoi(++equal);
+        }
+        token = strtok(NULL, "&");
+    }
+    if (server.find("live-send.acg.tv") != string::npos && app == "bilibili") {
+        string bili_app = string(b_app);
         server = bili_app + "." + server;
         app = "live-" + bili_app;
         stream = string("");
     } else {
         app = string("video");
+        if (server.find("phb2cn") != string::npos) {
+            server = string(push_domain);
+        }
     }
     string tcUrl = "rtmp://" + server + ":" + srs_int2str(port) + "/"  + app;
     string streamWithQuery = srs_generate_stream_with_query(host, vhost, stream, param);
     string url = tcUrl + "/" + streamWithQuery;
-    // srs_error("%s\n", url.c_str());
+    srs_error("%s\n", url.c_str());
     return url;
 }
 
